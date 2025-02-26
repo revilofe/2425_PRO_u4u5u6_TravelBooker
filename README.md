@@ -6,116 +6,107 @@
 
 ---
 
-### Descripción:
+### Descripción: **Ejercicio: Gestor de Reservas para una Agencia de Viajes**
 
-A continuación, te presento el **ejercicio** detallado que integra los fundamentos de la programación orientada a objetos, principios SOLID (en particular, el principio de inversión de dependencias) y la separación en capas (presentación y lógica de aplicación) en una aplicación de consola para la gestión de tareas y eventos en proyectos colaborativos.
-
----
-
-### **Ejercicio: Gestor de Tareas y Eventos para Proyectos Colaborativos**
+En este ejercicio, crearás una plicación en la que aplicarás los conceptos de Programación Orientada a Objetos (POO) en Kotlin, incluyendo herencia, interfaces, clases abstractas, principios SOLID y arquitectura en capas. La aplicación simula un gestor de reservas para una agencia de viajes, permitiendo la creación y consulta de reservas de vuelo y de hotel. 
 
 #### **Contexto y Objetivo**
 
-Desarrolla una aplicación de consola en Kotlin que permita gestionar **actividades** en un proyecto colaborativo. Estas actividades se dividen en dos tipos: **Tareas** y **Eventos**. Ambas derivan de una superclase o interfaz denominada **Actividad**.
+Desarrolla una aplicación de consola en Kotlin que permita gestionar **reservas** en una agencia de viajes. Estas reservas se dividen en dos tipos: **Reserva de Vuelo** y **Reserva de Hotel**. Ambas derivan de una superclase o interfaz denominada **Reserva**.
 
 La aplicación debe seguir una **arquitectura en capas**, separando claramente:
 - **La capa de presentación (UI):** se encarga de la interacción con el usuario a través de la consola.
-- **La capa de lógica de aplicación:** gestiona la lógica de negocio (creación, almacenamiento y manejo de actividades).
+- **La capa de lógica de aplicación:** gestiona la lógica de negocio (creación, almacenamiento y manejo de reservas).
 - **La capa de acceso a datos:** aunque en este ejercicio se puede utilizar un repositorio en memoria, se debe abstraer su acceso mediante interfaces, aplicando el principio de inversión de dependencias.
 
 #### **Requerimientos Funcionales y No Funcionales**
 
 1. **Arquitectura en Capas y Principio de Inversión de Dependencias**
-   - La lógica de negocio debe depender de abstracciones (por ejemplo, interfaces de repositorios) y no de implementaciones concretas.
-   - La comunicación entre la interfaz de usuario y la lógica de negocio debe estar claramente separada.
+  - La lógica de negocio debe depender de abstracciones (por ejemplo, interfaces de repositorios) y no de implementaciones concretas.
+  - La comunicación entre la interfaz de usuario y la lógica de negocio debe estar claramente separada.
 
-2. **Modelo de Dominio: Actividad, Tarea y Evento**
-   - **Actividad (Superclase o Interfaz):**
-     - Contendrá la lógica común a todas las actividades.
-     - Posee un **id**. Se asigna automáticamente al crear la instancia. No puede ser nula. No se puede modificar.
-     - Posee una **fechaCreación**. Se asigna automáticamente al crear la instancia. No puede ser nula. No se puede modificar.
-     - Posee un **descripción**. No puede ser nula.
-     - Debe incluir una propiedad, `detalle`, cuyo `get` utilice la lógica común para concatenar el *id* y la descripción.
-   - **Tarea:**
-     - Hereda las propiedades de Actividad.
-     - Posee una propiedad **estado**, por defecto abierta. Que toma valores de la enum class Statu = {ABIERTA, CERRADA} 
-     - Tiene una propiedad **detalle** que se genera dinámicamente: `id + " - " + descripción`.
-     - Su constructor es **privado**. Se debe disponer de un método de clase (companion object) llamado `creaInstancia` para generar una nueva instancia.
-     - Sobreescribe `toString`. Muestra formateada toda la información de la tarea.
-     - Cualquier otra propiedad o método que consideres necesario. No olvides comentarlo
-   - **Evento:**
-     - Hereda las propiedades de Actividad.
-     - Tiene la propiedad **fecha**.
-     - Tiene la propiedad **ubicación**.
-     - Tiene una propiedad **detalle** que se genera dinámicamente: `id+ " - " + ubicacion + " - " + descripción`).
-     - Similar a **Tarea** en cuanto a tener un constructor privado y el método `creaInstancia`.
-     - Sobre escribe `toString`. Muestra formateada toda la información del evento.
-     - Cualquier otra propiedad o método que consideres necesario. No olvides comentarlo
-
+2. **Modelo de Dominio: Reserva, Reserva de Vuelo y Reserva de Hotel**
+  - **Reserva (Superclase o Interfaz):**
+    - Contendrá la lógica común a todas las reservas.
+    - Posee un **id**. Se asigna automáticamente al crear la instancia. No puede ser nula y no se puede modificar.
+    - Posee una **fechaCreacion**. Se asigna automáticamente al crear la instancia. No puede ser nula y no se puede modificar.
+    - Posee una **descripcion**. No puede ser nula (por ejemplo, descripción del itinerario o servicio).
+    - Debe incluir una propiedad `detalle`, cuyo getter utilice la lógica común para concatenar el *id* y la descripción.
+  - **Reserva de Vuelo:**
+    - Hereda las propiedades de Reserva.
+    - Posee atributos propios: **origen**, **destino** y **horaVuelo**.
+    - La propiedad **detalle** se genera dinámicamente, por ejemplo:  
+      `id + " - " + origen + " -> " + destino + " - " + descripcion`.
+    - Su constructor es **privado**. Se debe disponer de un método de clase (companion object) llamado `creaInstancia` para generar una nueva instancia.
+    - Sobreescribe `toString` para mostrar formateada toda la información de la reserva de vuelo.
+  - **Reserva de Hotel:**
+    - Hereda las propiedades de Reserva.
+    - Posee atributos propios: **ubicacion** y **numeroNoches**.
+    - La propiedad **detalle** se genera dinámicamente, por ejemplo:  
+      `id + " - " + ubicacion + " - " + descripcion`.
+    - Al igual que Reserva de Vuelo, su constructor es privado y se debe utilizar el método `creaInstancia` para crear instancias.
+    - Sobreescribe `toString` para mostrar formateada toda la información de la reserva de hotel.
 
 3. **Buenas Prácticas y Principios SOLID**
-   - Utiliza el principio de **inversión de dependencias**: la lógica de negocio no debe depender de clases concretas para el almacenamiento de las actividades.
-   - Documenta y comenta el código de forma clara, y sobre todo aquellas aportaciones que no están indicadas en la descripción de la actividad.
-   - Separa los métodos estáticos (en Kotlin se implementan mediante *companion objects*) y asegúrate de que la creación de instancias se haga mediante el método `creaInstancia`.
+  - Utiliza el principio de **inversión de dependencias**: la lógica de negocio no debe depender de clases concretas para el almacenamiento de las reservas.
+  - Documenta y comenta el código de forma clara, explicando las decisiones de diseño, especialmente aquellas que no están explícitamente indicadas en la descripción.
+  - Separa los métodos estáticos (en Kotlin se implementan mediante *companion objects*) y asegúrate de que la creación de instancias se haga mediante el método `creaInstancia`.
+  - Integra el uso de **clases genéricas** (por ejemplo, en la implementación del repositorio) y **expresiones regulares** para validar ciertos formatos de entrada (por ejemplo, el formato de la hora en la Reserva de Vuelo).
 
 4. **Interfaz de Usuario (Consola)**
-   - La aplicación debe interactuar con el usuario a través de la consola, mostrando un menú que permita:
-     - Crear una nueva actividad (seleccionando entre Tarea o Evento).
-     - Listar todas las actividades registradas. Aplicando polimorfismo, se debe mostrar el detalle de cada actividad (id y descripción).
-   - La capa de presentación debe comunicarse con la lógica de negocio a través de interfaces o abstracciones.
+  - La aplicación debe interactuar con el usuario a través de la consola, mostrando un menú que permita:
+    - Crear una nueva reserva (seleccionando entre Reserva de Vuelo o Reserva de Hotel).
+    - Listar todas las reservas registradas, mostrando el detalle (id y descripción) de cada reserva mediante polimorfismo.
+  - La capa de presentación debe comunicarse con la lógica de negocio a través de interfaces o abstracciones.
 
 5. **Lógica de Aplicación**
-   - Implementa un servicio (por ejemplo, `ActividadService`) que gestione la creación, almacenamiento (en memoria) y consulta de actividades.
-   - Este servicio debe depender de una interfaz de repositorio (por ejemplo, `IActividadRepository`), permitiendo cambiar la implementación del almacenamiento sin afectar la lógica de negocio.
+  - Implementa un servicio (por ejemplo, `ReservaService`) que gestione la creación, almacenamiento (en memoria) y consulta de reservas.
+  - Este servicio debe depender de una interfaz de repositorio (por ejemplo, `IReservaRepository`), permitiendo cambiar la implementación del almacenamiento sin afectar la lógica de negocio.
 
+#### **Objetivos del Ejercicio**
 
-**Objetivo:**
-
-- Demostrar comprensión de los fundamentos de POO mediante la instanciación y uso de objetos.
-- Aplicar conceptos avanzados de POO como herencia, clases abstractas, e interfaces.
-- Crear y usar clases que hagan uso de genéricos. 
-- Aplicar principios SOLID.
-- Hacer uso de las expresiones regulares.
-- Integrar y utilizar librerías de clases externas para extender la funcionalidad del proyecto.
+- Demostrar la comprensión de los fundamentos de la Programación Orientada a Objetos mediante la instanciación y uso de objetos.
+- Aplicar conceptos avanzados de POO como herencia, clases abstractas e interfaces.
+- Crear y utilizar clases que hagan uso de genéricos.
+- Aplicar principios SOLID, especialmente la inversión de dependencias.
+- Emplear expresiones regulares para la validación de entradas.
+- Integrar y utilizar librerías externas para extender la funcionalidad del proyecto.
 - Documentar y presentar el código de manera clara y comprensible.
 
-**Trabajo a realizar:**
-
-El que se deriva de la descripción. No obsgtante te listo algunas cosas, auqnue no tienen porque estar todas:
+#### **Trabajo a Realizar**
 
 1. **Definición de Clases y Estructura del Proyecto**
-   - Crea un paquete (o módulo) para cada capa: 
-     - `presentacion` para la interfaz de usuario.
-     - `aplicacion` o `servicios` para la lógica de negocio.
-     - `datos` para la implementación del repositorio (en memoria).
-     - `dominio` para definir las clases **Actividad**, **Tarea** y **Evento**.
+  - Organiza el proyecto en paquetes (o módulos) que representen cada capa:
+    - `presentacion` para la interfaz de usuario.
+    - `servicios` (o `aplicacion`) para la lógica de negocio.
+    - `datos` para la implementación del repositorio (en memoria).
+    - `dominio` para definir las clases **Reserva**, **Reserva de Vuelo** y **Reserva de Hotel**.
 
 2. **Implementación del Modelo de Dominio**
-   - Define la superclase o interfaz **Actividad** que incluya:
-     - Una propiedad común `detalle` .
-     - Cualquier lógica que consideres común a Tareas y Eventos.
-   - Implementa **Tarea** y **Evento**:
-     - **Campos inmutables:** El campo **id** debe generarse automáticamente (puedes utilizar una variable estática en la clase).
-     - **Constructores privados:** Asegúrate de que los constructores sean privados y se acceda a ellos únicamente mediante el método `creaInstancia` en el *companion object*.
-     - **Propiedad `detalle`:** Implementa el getter para que retorne la concatenación del **id** y la **descripción**.
+  - Define la superclase o interfaz `Reserva` que incluya:
+    - Las propiedades comunes (`id`, `fechaCreacion`, `descripcion` y `detalle`).
+    - La lógica compartida que consideres necesaria.
+  - Implementa las clases `Reserva de Vuelo` y `Reserva de Hotel` siguiendo las especificaciones:
+    - Campos inmutables (por ejemplo, `id` y `fechaCreacion` generados automáticamente).
+    - Constructores privados con el método `creaInstancia` en el *companion object*.
+    - Propiedad `detalle` que concatene la información de forma dinámica.
 
 3. **Desarrollo de la Lógica de Aplicación**
-   - Implementa un servicio (`ActividadService`) que:
-     - Utilice una interfaz de repositorio (`IActividadRepository`) para almacenar y recuperar actividades.
-     - Permita la creación de nuevas actividades mediante métodos que invoquen `creaInstancia` de cada clase.
-   - Recuerda aplicar el **principio de inversión de dependencias**: el servicio debe depender de la abstracción, no de una implementación concreta.
+  - Implementa un servicio (`ReservaService`) que:
+    - Utilice una interfaz de repositorio (`IReservaRepository`) para almacenar y recuperar reservas.
+    - Permita la creación de nuevas reservas mediante métodos que invoquen `creaInstancia` de cada clase.
+  - Aplica el principio de inversión de dependencias, de modo que el servicio dependa de la abstracción, no de una implementación concreta.
 
 4. **Interfaz de Usuario (Consola)**
-   - Crea una interfaz de usuario sencilla que muestre un menú:
-     - **Opción 1:** Crear nueva actividad (se debe preguntar al usuario si desea crear una Tarea o un Evento, luego solicitar los datos requeridos).
-     - **Opción 2:** Listar todas las actividades, mostrando el detalle (id y descripción) de cada una.
-   - La capa de presentación debe invocar los métodos del servicio para realizar las operaciones solicitadas.
+  - Desarrolla una interfaz de usuario en consola que muestre un menú con las siguientes opciones:
+    - **Opción 1:** Crear nueva reserva (se debe preguntar al usuario si desea crear una Reserva de Vuelo o de Hotel, y solicitar los datos requeridos).
+    - **Opción 2:** Listar todas las reservas registradas, mostrando el detalle (id y descripción) de cada reserva.
+  - La capa de presentación debe comunicarse con el servicio para realizar las operaciones solicitadas.
 
-5. **Documentación y Comentarios**
-   - Asegúrate de comentar el código, explicando las decisiones de diseño, la aplicación de los principios SOLID (especialmente la inversión de dependencias) y el funcionamiento general del sistema.
+5. **Documentación y Pruebas**
+  - Comenta el código de forma clara, explicando las decisiones de diseño y la aplicación de los principios SOLID.
+  - Realiza pruebas y depura la aplicación para asegurar su correcto funcionamiento.
 
-6. **Prueba y Depuración:** Realiza pruebas para asegurarte de que tu aplicación funciona como se espera y depura cualquier error encontrado.
-7. **Contesta a las preguntas** Ver el punto **Preguntas para la Evaluación**
 
 ### Recursos
 
@@ -128,7 +119,7 @@ El que se deriva de la descripción. No obsgtante te listo algunas cosas, auqnue
 
 **Conlleva presentación**: SI
 
-**RÚbrica**: Más adelante se enviará o mostrará la rúbrica de esta práctica.
+**Rúbrica**: Más adelante se enviará o mostrará la rúbrica de esta práctica.
 
 ### Entrega
 
