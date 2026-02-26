@@ -27,7 +27,7 @@ La aplicación debe seguir una **arquitectura en capas**, separando claramente:
 
 2. **Modelo de Dominio: Reserva, Reserva de Vuelo y Reserva de Hotel**
   - **Reserva (Superclase o Interfaz):**
-    - Contendrá la lógica común a todas las reservas.
+    - Contendrá la lógica común a todas las reservas, aunque no se permitirá la creación de una instancia de la misma.
     - Posee un **id**. Se asigna automáticamente al crear la instancia. No puede ser nula y no se puede modificar.
     - Posee una **fechaCreacion**. Se asigna automáticamente al crear la instancia. No puede ser nula y no se puede modificar.
     - Posee una **descripcion**. No puede ser nula (por ejemplo, descripción del itinerario o servicio).
@@ -36,14 +36,14 @@ La aplicación debe seguir una **arquitectura en capas**, separando claramente:
     - Hereda las propiedades de Reserva.
     - Posee atributos propios: **origen**, **destino** y **horaVuelo**.
     - La propiedad **detalle** se genera dinámicamente, por ejemplo:  
-      `id + " - " + origen + " -> " + destino + " - " + descripcion`.
+      `id + " - " + descripcion + " - " + origen + " -> " + destino [horaVuelo]`.
     - Su constructor es **privado**. Se debe disponer de un método de clase (companion object) llamado `creaInstancia` para generar una nueva instancia.
     - Sobreescribe `toString` para mostrar formateada toda la información de la reserva de vuelo.
   - **Reserva de Hotel:**
     - Hereda las propiedades de Reserva.
     - Posee atributos propios: **ubicacion** y **numeroNoches**.
     - La propiedad **detalle** se genera dinámicamente, por ejemplo:  
-      `id + " - " + ubicacion + " - " + descripcion`.
+      `id + " - " + descripcion + " - " + ubicacion (numeroNoches)`.
     - Al igual que Reserva de Vuelo, su constructor es privado y se debe utilizar el método `creaInstancia` para crear instancias.
     - Sobreescribe `toString` para mostrar formateada toda la información de la reserva de hotel.
 
@@ -56,12 +56,12 @@ La aplicación debe seguir una **arquitectura en capas**, separando claramente:
 4. **Interfaz de Usuario (Consola)**
   - La aplicación debe interactuar con el usuario a través de la consola, mostrando un menú que permita:
     - Crear una nueva reserva (seleccionando entre Reserva de Vuelo o Reserva de Hotel).
-    - Listar todas las reservas registradas, mostrando el detalle (id y descripción) de cada reserva mediante polimorfismo.
+    - Listar todas las reservas registradas, mostrando el detalle de cada reserva mediante polimorfismo.
   - La capa de presentación debe comunicarse con la lógica de negocio a través de interfaces o abstracciones.
 
 5. **Lógica de Aplicación**
   - Implementa un servicio (por ejemplo, `ReservaService`) que gestione la creación, almacenamiento (en memoria) y consulta de reservas.
-  - Este servicio debe depender de una interfaz de repositorio (por ejemplo, `IReservaRepository`), permitiendo cambiar la implementación del almacenamiento sin afectar la lógica de negocio.
+  - Este servicio debe depender de una interfaz de repositorio (por ejemplo, `IReservaRepository`), permitiendo cambiar la implementación del almacenamiento sin afectar la lógica de negocio. Es decir, debéis aplicar el ppio DIP e inyectar en esta clase `ReservaService` un repositorio a través de la abstracción `IReservaRepository`.
 
 #### **Objetivos del Ejercicio**
 
@@ -88,12 +88,13 @@ La aplicación debe seguir una **arquitectura en capas**, separando claramente:
     - La lógica compartida que consideres necesaria.
   - Implementa las clases `Reserva de Vuelo` y `Reserva de Hotel` siguiendo las especificaciones:
     - Campos inmutables (por ejemplo, `id` y `fechaCreacion` generados automáticamente).
+    - Las propiedades específicas de cada una (`origen`, `destino`, `horaVuelo`) y (`ubicacion`, `numeroNoches`)
     - Constructores privados con el método `creaInstancia` en el *companion object*.
     - Propiedad `detalle` que concatene la información de forma dinámica.
 
 3. **Desarrollo de la Lógica de Aplicación**
   - Implementa un servicio (`ReservaService`) que:
-    - Utilice una interfaz de repositorio (`IReservaRepository`) para almacenar y recuperar reservas.
+    - Utilice una interfaz de repositorio (`IReservaRepository`) para almacenar y recuperar reservas (`agregar` y `obtenerTodas`).
     - Permita la creación de nuevas reservas mediante métodos que invoquen `creaInstancia` de cada clase.
   - Aplica el principio de inversión de dependencias, de modo que el servicio dependa de la abstracción, no de una implementación concreta.
 
@@ -106,64 +107,3 @@ La aplicación debe seguir una **arquitectura en capas**, separando claramente:
 5. **Documentación y Pruebas**
   - Comenta el código de forma clara, explicando las decisiones de diseño y la aplicación de los principios SOLID.
   - Realiza pruebas y depura la aplicación para asegurar su correcto funcionamiento.
-
-
-### Recursos
-
-- Apuntes dados en clase sobre programación orientada a objetos, Kotlin, uso de IDEs, y manejo de librerías.
-- Recursos vistos en clase, incluyendo ejemplos de código, documentación de Kotlin, y guías de uso de librerías.
-
-### Evaluación y calificación
-
-**RA y CE evaluados**: Resultados de Aprendizaje 2, 4, 6, 7 y Criterios de Evaluación asociados.
-
-**Conlleva presentación**: SI
-
-**Rúbrica**: Más adelante se enviará o mostrará la rúbrica de esta práctica.
-
-### Entrega
-
-> **La entrega tiene que cumplir las condiciones de entrega para poder ser calificada. En caso de no cumplirlas podría calificarse como no entregada.**
->
-- **Conlleva la entrega de URL a repositorio:** El contenido se entregará en un repositorio GitHub. 
-- **Respuestas a las preguntas:** Deben contestarse, de manera clara y detallada en este fichero, README.md
-
-    - Al final del documento, incluid un nuevo apartado, que se llame: "Entrega de la Práctica", dónde nos realicéis una pequeña introducción explicativa de vuestro tema, es decir, el problema que vais a solucionar y cómo lo habéis resuelto. Podéis incluir los subapartados que consideréis necesarios (estructura de carpetas, explicación y organización de clases, instrucciones de instalación, manual de usuario, ejemplos de funcionamiento, etc.)
-
-    - **MUY IMPORTANTE!!** Incluir un subapartado ("Respuestas a las preguntas planteadas") dónde se resuelvan las preguntas de evaluación que os realizamos a continuación. De forma clara y detallada, incluyendo enlaces al código que justifica vuestra respuesta si es necesario.
-
-# Preguntas para la Evaluación
-
-Este conjunto de preguntas está diseñado para ayudarte a reflexionar sobre cómo has aplicado los criterios de evaluación en tu proyecto. Al responderlas, **asegúrate de hacer referencia y enlazar al código relevante** en tu `README.md`, facilitando así la evaluación de tu trabajo.
-
-#### **Criterio global 1: Instancia objetos y hacer uso de ellos**
-- **(2.a, 2.b, 2.c, 2.d, 2.f, 2.h, 4.e, 4.f)**: Describe cómo has instanciado y utilizado objetos en tu proyecto. ¿Cómo has aplicado los constructores y pasado parámetros a los métodos? Proporciona ejemplos específicos de tu código.
-
-#### **Criterio global 2: Crear y llamar métodos estáticos**
-- **(4.h)**: ¿Has definido algún método/propiedad estático en tu proyecto? ¿Cuál era el objetivo y por qué consideraste que debía ser estático en lugar de un método/propiedad de instancia?
-- **(2.e)**: ¿En qué parte del código se llama a un método estático o se utiliza la propiedad estática?
-
-#### **Criterio global 3: Uso de entornos**
-- **(2.i)**: ¿Cómo utilizaste el IDE para el desarrollo de tu proyecto? Describe el proceso de creación, compilación, y prueba de tu programa.
-
-#### **Criterio global 4: Definir clases y su contenido**
-- **(4.a, 4.b, 4.c, 4.d, 4.g)**: Explica sobre un ejemplo de tu código, cómo definiste las clases en tu proyecto, es decir como identificaste las de propiedades, métodos y constructores y modificadores del control de acceso a métodos y propiedades, para representar al objeto del mundo real. ¿Cómo contribuyen estas clases a la solución del problema que tu aplicación aborda?
-
-#### **Criterio global 5: Herencia y uso de clases abstractas e interfaces**
-- **(4.g, 7.a, 7.b, 7.c, 7.i, 7.j)**: Describe sobre tu código cómo has implementado la herencia y/o utilizado interfaces en tu proyecto. ¿Por qué elegiste este enfoque y cómo beneficia a la estructura de tu aplicación? ¿De qué manera has utilizado los principios SOLID para mejorar el diseño de tu proyecto? Mostrando tu código, contesta qué principios has utilizado y qué beneficio has obtenido.
-
-#### **Criterio global 6: Diseño de jerarquía de clases**
-- **(7.d, 7.e, 7.f, 7.g)**: Presenta la jerarquía de clases que diseñaste. ¿Cómo probaste y depuraste esta jerarquía para asegurar su correcto funcionamiento? ¿Qué tipo de herencia has utilizado: Especificación, Especialización, Extensión, Construcción?
-
-#### **Criterio global 7: Librerías de clases**
-- **(2.g, 4.i)**: Describe cualquier librería externa que hayas incorporado en tu proyecto. Explica cómo y por qué las elegiste, y cómo las incorporaste en tu proyecto. ¿Cómo extendió la funcionalidad de tu aplicación? Proporciona ejemplos específicos de su uso en tu proyecto.
-
-#### **Criterio global 8: Documentado**
-- **(7.h)**: Muestra ejemplos de cómo has documentado y comentado tu código. ¿Que herramientas has utilizado? ¿Cómo aseguras que tu documentación aporte valor para la comprensión, mantenimiento y depuración del código?
-
-#### **Criterio global 9: Genéricos**
-- **(6.f)**: Muestra ejemplos de tu código sobre cómo has implementado una clase con genéricos. ¿Qué beneficio has obtenido?
-
-#### **Criterio global 10: Expresiones Regulares**
-- **(6.g)**: Muestra ejemplos de tu código donde hayas utilizado las expresiones regulares. ¿Qué beneficio has obtenido?
-
